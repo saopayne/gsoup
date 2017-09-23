@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"fmt"
 	"strings"
-	"os"
 	"log"
 	"regexp"
 	"errors"
@@ -82,34 +81,41 @@ func listLinks(url string, ch chan string, chanExhausted chan bool) {
 }
 
 func main() {
-	foundUrls := make(map[string]bool)
-	seedUrls := os.Args[1:]
+	//foundUrls := make(map[string]bool)
+	//seedUrls := os.Args[1:]
+	//
+	//// Channels to hold the concurrent requests
+	//chUrls := make(chan string)
+	//chFinished := make(chan bool)
+	//
+	//// Kick off the crawl process (concurrently)
+	//for _, url := range seedUrls {
+	//	go listLinks(url, chUrls, chFinished)
+	//}
+	//
+	//// Subscribe to both channels
+	//for c := 0; c < len(seedUrls); {
+	//	select {
+	//	case url := <-chUrls:
+	//		foundUrls[url] = true
+	//	case <-chFinished:
+	//		c++
+	//	}
+	//}
+	//
+	//fmt.Sprintf("\nUnique urls found are : %d\n", len(foundUrls))
+	//for url := range foundUrls {
+	//	fmt.Println(" - " + url)
+	//}
+	//
+	//close(chUrls)
 
-	// Channels to hold the concurrent requests
-	chUrls := make(chan string)
-	chFinished := make(chan bool)
-
-	// Kick off the crawl process (concurrently)
-	for _, url := range seedUrls {
-		go listLinks(url, chUrls, chFinished)
-	}
-
-	// Subscribe to both channels
-	for c := 0; c < len(seedUrls); {
-		select {
-		case url := <-chUrls:
-			foundUrls[url] = true
-		case <-chFinished:
-			c++
-		}
-	}
-
-	fmt.Sprintf("\nUnique urls found are : %d\n", len(foundUrls))
-	for url := range foundUrls {
-		fmt.Println(" - " + url)
-	}
-
-	close(chUrls)
+	resp, _ := connect("https://github.com/saopayne/gsoup")
+	doc := HTMLParse(resp)
+	title := doc.Find("body").Text()
+	fmt.Println("Title of the Readme :", title)
+	comicImg := doc.Find("h1").Find("p")
+	fmt.Println("Description of the project :", comicImg.Attrs()["src"])
 }
 
 // Using depth first search to find the first occurrence and return
@@ -202,8 +208,10 @@ func DisableDebug() {
 
 // Get returns the HTML returned by the url in string
 // Accepts the url and gets the content of the url page
-func Get(url string) (string, error) {
-	defer localPanic("Get()")
+// The connect(String url) method creates a new Connection, and get() fetches and parses a HTML file.
+// If an error occurs whilst fetching the URL, it will throw an exception, which you should handle appropriately.
+func connect(url string) (string, error) {
+	defer localPanic("connect()")
 	resp, err := http.Get(url)
 	if err != nil {
 		if debug {
