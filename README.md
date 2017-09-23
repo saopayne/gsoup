@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/saopayne/gsoup.svg?branch=master)](https://travis-ci.org/saopayne/gocardless-pro-go)
+[![Build Status](https://travis-ci.org/saopayne/gsoup.svg?branch=master)](https://travis-ci.org/saopayne/gsoup)
 
 # gsoup
 
@@ -18,7 +18,7 @@ go get github.com/saopayne/gsoup
 ``` go
 
 import (
-    "https://github.com/saopayne/gocardless-pro-go"
+    "https://github.com/saopayne/gsoup"
     "fmt"
 )
 
