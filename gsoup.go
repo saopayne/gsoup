@@ -1,4 +1,4 @@
-package main
+package gsoup
 
 import (
 	"golang.org/x/net/html"
@@ -316,6 +316,54 @@ func (r Root) FindNextSibling() Root {
 	}
 
 	return Root{nextSibling, nextSibling.Data, nil}
+}
+
+// FindParent finds the parent of the pointer in the DOM
+// returning a struct with a pointer to it
+func (r Root) FindParent() Root {
+	defer localPanic("FindNextSibling()")
+	parent := r.Pointer.Parent
+	if parent == nil {
+		if debug {
+			panic("No next sibling found")
+		}
+
+		return Root{nil, "", errors.New("No next sibling found")}
+	}
+
+	return Root{parent, parent.Data, nil}
+}
+
+// FindFirstChild finds the first child of the pointer in the DOM
+// returning a struct with a pointer to it
+func (r Root) FindFirstChild() Root {
+	defer localPanic("FindNextSibling()")
+	child := r.Pointer.FirstChild
+	if child == nil {
+		if debug {
+			panic("No next sibling found")
+		}
+
+		return Root{nil, "", errors.New("No next sibling found")}
+	}
+
+	return Root{child, child.Data, nil}
+}
+
+// FindLastChild finds the last child of the pointer in the DOM
+// returning a struct with a pointer to it
+func (r Root) FindLastChild() Root {
+	defer localPanic("FindNextSibling()")
+	child := r.Pointer.LastChild
+	if child == nil {
+		if debug {
+			panic("No next sibling found")
+		}
+
+		return Root{nil, "", errors.New("No next sibling found")}
+	}
+
+	return Root{child, child.Data, nil}
 }
 
 // FindPrevSibling finds the previous sibling of the pointer in the DOM
